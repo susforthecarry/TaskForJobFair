@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Search for customers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/fontawesome.css">
+    <link rel="stylesheet" href="assets/css/templatemo-scholar.css">
+    <link rel="stylesheet" href="assets/css/owl.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css">
+</head>
+<body>
+
+<header class="header-area header-sticky">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav class="main-nav">
+                    <a href="index.html" class="logo">
+                        <h1>Scholar</h1>
+                    </a>
+                    <div class="search-input">
+                        <form id="search">
+                            <input type="text" placeholder="Type Something" id="searchText" name="searchKeyword">
+                            <i class="fa fa-search"></i>
+                        </form>
+                    </div>
+                    <ul class="nav">
+                        <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
+                    </ul>
+                    <a class='menu-trigger'>
+                        <span>Menu</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="main-banner" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="owl-carousel owl-banner">
+                    <div class="item item-1">
+                        <div class="header-text">
+                            <span class="category">Search Now</span>
+                            <h2>Customer Transaction Insights Dashboard</h2>
+                            <p>The Customer Transaction Dashboard is an intuitive tool designed to track and analyze customer transactions effortlessly. With clear charts that show transaction trends, businesses can quickly grasp customer spending behaviors. Users can search transactions by customer name or amount, ensuring easy access to specific information. Created using HTML, CSS, JavaScript, and Bootstrap, this dashboard offers a straightforward interface connected to a JSON database backend. It aims to equip businesses with insights for smarter decisions and improved operational efficiency.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="services section" id="services">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="assets/images/service-01.png" alt="online degrees">
+                    </div>
+                    <div class="main-content">
+                        <h4>Customer Transaction Table</h4>
+                        <p>Display detailed customer transaction data in a tabular format.</p>
+                        <div class="main-button">
+                            <a href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="assets/images/service-02.png" alt="short courses">
+                    </div>
+                    <div class="main-content">
+                        <h4>Interactive Filtering</h4>
+                        <p>Filter transaction data by customer name or transaction amount.</p>
+                        <div class="main-button">
+                            <a href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="assets/images/service-03.png" alt="web experts">
+                    </div>
+                    <div class="main-content">
+                        <h4>Daily Transaction Graph</h4>
+                        <p>Visualize daily total transaction amounts per customer.</p>
+                        <div class="main-button">
+                            <a href="#">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section about-us">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-1">
+                <div class="container">
+                    <h1>Customer Transactions</h1>
+                    <div class="filters">
+                        <input type="text" id="searchName" placeholder="Search by customer name">
+                        <input type="number" id="searchAmount" placeholder="Search by transaction amount">
+                    </div>
+                    <table id="customerTable">
+                        <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Transaction Date</th>
+                                <th>Transaction Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-5 align-self-center">
+                <div class="section-heading">
+                    <h6>Graph </h6>
+                    <canvas id="transactionChart"></canvas>
+
+                 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <!-- Footer content -->
+</footer>
+
+<!-- Scripts -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/isotope.min.js"></script>
+<script src="assets/js/owl-carousel.js"></script>
+<script src="assets/js/counter.js"></script>
+<script src="assets/js/custom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const customerTable = document.getElementById('customerTable').getElementsByTagName('tbody')[0];
+        const searchName = document.getElementById('searchName');
+        const searchAmount = document.getElementById('searchAmount');
+        const transactionChartCtx = document.getElementById('transactionChart').getContext('2d');
+        let transactionChart;
+
+        let customers = [];
+        let transactions = [];
+        let filteredTransactions = [];
+
+        const fetchData = async () => {
+            try {
+                const response = await fetch('./db.json'); // Adjust path as needed
+                const data = await response.json();
+                customers = data.customers;
+                transactions = data.transactions;
+                filteredTransactions = transactions;
+                displayData();
+                createDailyTransactionChart(); // Initially create chart with all data
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        const displayData = () => {
+            customerTable.innerHTML = '';
+            filteredTransactions.forEach(transaction => {
+                const customer = customers.find(cust => cust.id === transaction.customer_id);
+                if (customer) {
+                    const row = customerTable.insertRow();
+                    row.insertCell(0).innerText = customer.name;
+                    row.insertCell(1).innerText = transaction.date;
+                    row.insertCell(2).innerText = transaction.amount;
+                }
+            });
+        };
+
+        const filterData = () => {
+            const nameFilter = searchName.value.toLowerCase();
+            const amountFilter = searchAmount.value;
+
+            filteredTransactions = transactions.filter(transaction => {
+                const customer = customers.find(cust => cust.id === transaction.customer_id);
+                if (!customer) {
+                    return false;
+                }
+                const matchesName = customer.name.toLowerCase().includes(nameFilter);
+                const matchesAmount = !amountFilter || transaction.amount === Number(amountFilter);
+                return matchesName && matchesAmount;
+            });
+
+            displayData();
+            createDailyTransactionChart(); // Update chart after filtering
+        };
+
+        searchName.addEventListener('input', filterData);
+        searchAmount.addEventListener('input', filterData);
+
+        const createDailyTransactionChart = () => {
+            const dates = [...new Set(filteredTransactions.map(trans => trans.date))];
+            const totalAmounts = dates.map(date => {
+                return filteredTransactions
+                    .filter(trans => trans.date === date)
+                    .reduce((total, trans) => total + trans.amount, 0);
+            });
+
+            if (transactionChart) {
+                transactionChart.destroy();
+            }
+
+            transactionChart = new Chart(transactionChartCtx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Total Transaction Amount',
+                        data: totalAmounts,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        };
+
+        fetchData();
+    });
+    const transactionChart = new Chart(transactionChartCtx, {
+    type: 'line',
+    data: {
+        labels: dates,
+        datasets: [{
+            label: 'Total Transaction Amount',
+            data: totalAmounts,
+            fill: true,
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.4,
+            borderWidth: 2
+        }]
+    },
+    options: {
+        plugins: {
+            tooltip: {
+                backgroundColor: 'rgba(33, 33, 33, 0.8)',
+                titleColor: '#fff',
+                bodyColor: '#fff',
+                mode: 'index',
+                intersect: false
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#333'
+                },
+                grid: {
+                    color: '#eee'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#333'
+                },
+                grid: {
+                    color: '#eee'
+                }
+            }
+        }
+    }
+});
+
+</script>
+</body>
+</html>
